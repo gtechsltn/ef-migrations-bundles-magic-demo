@@ -44,7 +44,7 @@ jobs:
 
     # Bundling, generates an executable
     - name: Bundle EF Core
-      run: dotnet ef migrations bundle --self-contained
+      run: dotnet ef migrations -p "${{ env.simpleproject-path }}" bundle --self-contained
         
     # Find & Save the deployment script that we created
     - name: Store SQL Artifacts
