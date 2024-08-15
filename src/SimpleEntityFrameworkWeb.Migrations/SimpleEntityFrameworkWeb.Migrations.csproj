@@ -15,4 +15,7 @@
     <ProjectReference Include="..\SimpleEntityFrameworkWeb\SimpleEntityFrameworkWeb.csproj" />
   </ItemGroup>
 
+	<PropertyGroup>
+		<BaseOutputPath>..\SimpleEntityFrameworkWeb\bin\</BaseOutputPath>
+	</PropertyGroup>
 </Project>

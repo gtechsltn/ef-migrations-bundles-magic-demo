@@ -2,9 +2,9 @@ name: CI/CD Example
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ develop ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -12,6 +12,7 @@ jobs:
     runs-on: windows-latest
     name: Build & Store Migrations
     env:
+      solution-path: '.\src\EF Bundles and Migration Demo.sln'
       simpleproject-path: '.\src\SimpleEntityFrameworkWeb\SimpleEntityFrameworkWeb.csproj'
   
     steps:
@@ -33,15 +34,18 @@ jobs:
     
     # Restore & Build, doing this for performance purposes
     - name: Restore Packages
-      run: dotnet restore "${{ env.simpleproject-path }}"
+      run: dotnet restore "${{ env.solution-path }}"
     - name: Build
-      run: dotnet build "${{ env.simpleproject-path }}" --no-restore --configuration Release
+      run: dotnet build "${{ env.solution-path }}" --no-restore --configuration Release
     
     # Scripting, generates a single migration file
     - name: Script EF Core
       run: dotnet ef migrations script -p "${{ env.simpleproject-path }}" -o ./deploy-script.sql --configuration Release -i --no-build
-    
-    
+
+    # Bundling, generates an executable
+    - name: Bundle EF Core
+      run: dotnet ef migrations -p "${{ env.simpleproject-path }}" bundle --self-contained
+        
     # Find & Save the deployment script that we created
     - name: Store SQL Artifacts
       if: github.event_name != 'pull_request'
@@ -49,4 +53,13 @@ jobs:
       with:
         name: migration-script
         path: deploy-script.sql
+        retention-days: 1 # only need long enough to test/validate
+
+    # Find & Save the migration bundle
+    - name: Store Migrations Bundle
+      if: github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v4
+      with:
+        name: migration-script
+        path: '**/efbundle.exe'
         retention-days: 1 # only need long enough to test/validate
