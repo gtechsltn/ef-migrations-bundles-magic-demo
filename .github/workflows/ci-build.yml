@@ -60,6 +60,6 @@ jobs:
       if: github.event_name != 'pull_request'
       uses: actions/upload-artifact@v4
       with:
-        name: migration-script
+        name: migration-bundle
         path: '**/efbundle.exe'
         retention-days: 1 # only need long enough to test/validate
