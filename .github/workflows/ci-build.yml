@@ -34,7 +34,7 @@ jobs:
     
     # Restore & Build, doing this for performance purposes
     - name: Restore Packages
-      run: dotnet restore "${{ env.solutions-path }}"
+      run: dotnet restore "${{ env.solution-path }}"
     - name: Build
       run: dotnet build "${{ env.solution-path }}" --no-restore --configuration Release
     
